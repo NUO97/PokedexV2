@@ -5,17 +5,17 @@ A multiplayer browser game for collecting &amp; battling Pokemons
 <ul>
 <li> main.html - the main page of the application, which lets a user choose to start a game or trade Pokemon
 with another user and the pokedex/game view of the application, which lets a user choose a Pokemon to
-play with and then play a Pokemon card game with another player.
-<li> main.min.js and lib.min.js - the JS for main.html.
-<li> styles.css - the styles for main.html.
-<li> setup.sql - a small SQL file that sets up your personal Pokedex table.
-<li> getcreds.php - a web service for retrieving your player credentials (PID and token).
-<li> select.php - a web service for retrieving the Pokemon from your Pokedex table.
-<li> insert.php - a web service for adding a Pokemon to your Pokedex table.
-<li> update.php - a web service for naming a Pokemon in your Pokedex.
-<li> delete.php - a web service for removing a Pokemon from your Pokedex table.
-<li> trade.php - a web service for updating your Pokedex list after a Pokemon “trade”.
-<li> common.php - shared PHP functions for your other PHP files.
+  play with and then play a Pokemon card game with another player. </li>
+<li> main.min.js and lib.min.js - the JS for main.html. </li>
+<li> styles.css - the styles for main.html. </li>
+<li> setup.sql - a small SQL file that sets up your personal Pokedex table. </li>
+<li> getcreds.php - a web service for retrieving your player credentials (PID and token). </li>
+<li> select.php - a web service for retrieving the Pokemon from your Pokedex table. </li>
+<li> insert.php - a web service for adding a Pokemon to your Pokedex table. </li>
+<li> update.php - a web service for naming a Pokemon in your Pokedex. </li>
+<li> delete.php - a web service for removing a Pokemon from your Pokedex table. </li>
+<li> trade.php - a web service for updating your Pokedex list after a Pokemon “trade”. </li>
+<li> common.php - shared PHP functions for your other PHP files. </li>
 </ul>
 
 ### Web Service Details
