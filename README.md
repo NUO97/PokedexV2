@@ -19,31 +19,25 @@ with another user and the pokedex/game view of the application, which lets a use
 </ul>
 
 ### Web Service Details
-bestreads.php service will provide different data based upon a couple query parameters named mode and
-title that are passed through URL. The value of mode should be description,
-info, reviews or books depending on which information you want. The value of title should be a string
-representing the single book to display. The browser should request with a URL such as the following:
 
-```
-//some.host.com/path/to/bestreads.php?mode=description&title=harrypotter
-```
-
-The behavior of each mode is described below:
+The behavior of each web service is described below:
 <ul>
-<li> mode=description: The title parameter must also be passed with this mode. The web service should locate
-the file called description.txt for the book, and output the entire contents as plain text. This is the
-only mode that should output its response as plain text; all of the others output JSON. </li>
-<li> mode=info: The title parameter must also be passed with this mode. The web service should output the
-contents of info.txt, a file with three lines of information about the book: its title, author, and number
-of stars, as JSON. </li>
+<li> Fetching Player Credentials - getcreds.php: 
+This PHP file returns the user’s player ID (PID) and token. For this assignment, your PID will be your UW
+netid. These PID and token values will be used by the front end code and the games webservice for verifying
+that players are who they say they are when they play moves in battle mode, and trade with one another.
+You will need to generate your token to play games and trade with other students on our server. To do so, visit
+https://webster.cs.washington.edu/pokedex-2/17au/uwnetid/generate-token.php. The PID and token
+values displayed should be carefully copy/pasted in your getcreds.php file.
+In this PHP file, you should print a plain text response (set the Content-Type in the header) with the body
+containing your PID followed by your token, each on their own line. Note that there are no query parameters for
+this file, so you print these values whenever the web service is called.
+</li>
 
-Example output:
+Example response for Kyle's credential:
 ```
-{
-"title":"Harry Potter and the Prisoner of Azkaban",
-"author":"by J.K. Rowling, Mary GrandPre(Illustrator)",
-"stars":"4.5"
-}
+kthayer
+poketoken_123456789.987654321
 ```
 <li> mode=reviews: The title parameter must also be passed with this mode. Output an array (in JSON
 form) containing all of the reviews for the book, the review score, and the name of the reviewer. The
