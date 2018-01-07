@@ -23,15 +23,11 @@ with another user and the pokedex/game view of the application, which lets a use
 The behavior of each web service is described below:
 <ul>
 <li> Fetching Player Credentials - getcreds.php: 
-This PHP file returns the user’s player ID (PID) and token. For this assignment, your PID will be your UW
+This PHP file returns the user’s player ID (PID) and token. For this game, your PID will be your UW
 netid. These PID and token values will be used by the front end code and the games webservice for verifying
 that players are who they say they are when they play moves in battle mode, and trade with one another.
-You will need to generate your token to play games and trade with other students on our server. To do so, visit
-https://webster.cs.washington.edu/pokedex-2/17au/uwnetid/generate-token.php. The PID and token
-values displayed should be carefully copy/pasted in your getcreds.php file.
-In this PHP file, you should print a plain text response (set the Content-Type in the header) with the body
-containing your PID followed by your token, each on their own line. Note that there are no query parameters for
-this file, so you print these values whenever the web service is called.
+In order to generate your token to play games, visit
+https://webster.cs.washington.edu/pokedex-2/17au/uwnetid/generate-token.php. 
 </li>
 
 Example response for Kyle's credential:
