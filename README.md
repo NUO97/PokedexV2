@@ -35,52 +35,94 @@ Example response for Kyle's credential:
 kthayer
 poketoken_123456789.987654321
 ```
-<li> mode=reviews: The title parameter must also be passed with this mode. Output an array (in JSON
-form) containing all of the reviews for the book, the review score, and the name of the reviewer. The
-reviews are stored in files called review1.txt, review2.txt, etc. Each file contains one review for each
-book which is exactly three lines: The reviewer’s name, the number of stars they gave the book and their
-review. If a book has 10 or more reviews, the names will be e.g. review01.txt, .... </li>
+<li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
+name, nickname, and found date/time for each Pokemon.</li>
 
 Example output:
 ```
-[
 {
-"name" : "Wil Wheaton",
-"score" : 4,
-"text" : "I'm beginning to wonder if there will ever be a Defense
-Against The Dark Arts teacher who is just a teacher"
-},
-{
-"name" : "Zoe",
-"score" : 5,
-"text" : "Yup yup yup I love this book"
-},
-{
-"name" : "Kiki"
-"score" : 5,
-"text" : "Literally one of the best books I've ever read. I
-was chained to it for two days."
+"pokemon": [
+{ "name" : "bulbasaur",
+"nickname" : "Bulby",
+"datefound" : "2017-05-15 13:54:00" },
+{ "name" : "charmander",
+"nickname" : "Charmy",
+"datefound" : "2017-05-16 08:45:10" },
+... ]
 }
-]
 ```
-<li>mode=books: Outputs JSON containing the titles and folder names for each of the books that we have
-data for. Find all the books inside the books folder, and build JSON containing information about each
-one. </li>
+<li>Adding a Pokemon to your Pokedex - insert.php: 
+<ul> Query Parameters (POST):
+  <li> name - name of Pokemon to add </li>
+  <li>nickname (optional) - nickname of added Pokemon</li>
+ </ul>
+insert.php adds a Pokemon to your Pokedex table, given a required name parameter. The name should be
+added to your Pokedex in all-lowercase (for example, name=BulbaSAUR should be saved as bulbasaur in the
+Pokedex table).
+If passed a nickname parameter, this nickname should also be added with the Pokemon (don’t modify the
+anything to upper or lower case for the nickname, just store it as it was given). Otherwise, the nickname for
+the Pokemon in your Pokedex table should be set to the Pokemon’s name in all uppercase (e.g., BULBASAUR
+for name=BulbaSAUR).</li>
+
+Upon success, you should output a JSON result in the format:
+```
+{ "success" : "Success! <name> added to your Pokedex!" }
+```
+
+If the Pokemon is already in the Pokedex (as determined by a duplicate name field), you should print a message
+with a 400 error header in the JSON format:
+```
+{ "error" : "Error: Pokemon <name> already found." }
+```
+where you should not change anything in your Pokedex as a result. For both success and error cases, <name>
+should be replaced with the value of the passed name (maintaining letter-casing).
+  
+<li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
+name, nickname, and found date/time for each Pokemon.</li>
 
 Example output:
 ```
 {
-"books" : [
+"pokemon": [
+{ "name" : "bulbasaur",
+"nickname" : "Bulby",
+"datefound" : "2017-05-15 13:54:00" },
+{ "name" : "charmander",
+"nickname" : "Charmy",
+"datefound" : "2017-05-16 08:45:10" },
+... ]
+}
+```
+<li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
+name, nickname, and found date/time for each Pokemon.</li>
+
+Example output:
+```
 {
-"title": "Harry Potter and the Prisoner of Azkaban",
-"folder": "harrypotter"
-},
+"pokemon": [
+{ "name" : "bulbasaur",
+"nickname" : "Bulby",
+"datefound" : "2017-05-15 13:54:00" },
+{ "name" : "charmander",
+"nickname" : "Charmy",
+"datefound" : "2017-05-16 08:45:10" },
+... ]
+}
+```
+<li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
+name, nickname, and found date/time for each Pokemon.</li>
+
+Example output:
+```
 {
-"title": "The Hobbit",
-"folder": "hobbit"
-},
-... (one entry like this for each folder inside books/)
-]
+"pokemon": [
+{ "name" : "bulbasaur",
+"nickname" : "Bulby",
+"datefound" : "2017-05-15 13:54:00" },
+{ "name" : "charmander",
+"nickname" : "Charmy",
+"datefound" : "2017-05-16 08:45:10" },
+... ]
 }
 ```
 </ul>
