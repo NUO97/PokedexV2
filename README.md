@@ -16,7 +16,7 @@ play with and then play a Pokemon card game with another player.
 <li> delete.php - a web service for removing a Pokemon from your Pokedex table.
 <li> trade.php - a web service for updating your Pokedex list after a Pokemon “trade”.
 <li> common.php - shared PHP functions for your other PHP files.
-<ul>
+</ul>
 
 ### Web Service Details
 bestreads.php service will provide different data based upon a couple query parameters named mode and
