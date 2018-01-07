@@ -1,0 +1,341 @@
+\documentclass[programming]{../../../../mfcs}
+\newcommand{\projectduedate}{Wednesday, May 31st}
+\newcommand{\quarter}{Spring 2017}
+\usepackage{color}
+\usepackage{multicol}
+\usepackage{wrapfig}
+\setlength{\belowcaptionskip}{-30pt}
+\setlength{\intextsep}{-20pt}
+\setlength{\textfloatsep}{0pt}
+
+\course{CSE 154}{Web Programming}{\quarter}
+\NoDate
+\topic{Homework Assignment 7: Pokedex V2}
+\usepackage{csquotes}
+\usepackage{tabularx}
+
+\begin{document}
+\vspace{-3.8em}
+
+\hfill\begin{varwidth}{0.5\textwidth}
+{\large {\bf\color{colour} Due Date:} \projectduedate}
+\end{varwidth}
+\vspace{2em}
+
+This assignment is about using PHP together with SQL to create, modify, and query information in a database.
+
+\vspace{2em}
+\begin{question}{Overview}
+  You are provided the following files:
+  \begin{itemize}
+    \item \texttt{main.html} - the main page of the application, which lets a user choose to start a
+      game or trade Pokemon with another user.
+    \item \texttt{main.js} - the JS for \texttt{main.html}
+    \item \texttt{pokedex.html} - the pokedex/game view of the application, which lets a user choose
+      a Pokemon to play with and then play a Pokemon card game with another player.
+    \item \texttt{pokedex.js} - the JS for \texttt{pokedex.html}
+    \item \texttt{styles.css} - the styles for \texttt{main.html} and \texttt{pokedex.html}
+  \end{itemize}
+
+  You will turn in the following files:
+  \begin{itemize}
+    \item \texttt{setup.sql} - a small SQL file that sets up your personal Pokedex table.
+    \item \texttt{getcreds.php} - a web service for retrieving your player credentials (PID and token).
+    \item \texttt{select.php} - a web service for adding a Pokemon to your Pokedex table.
+    \item \texttt{insert.php} - a web service for adding a Pokemon to your Pokedex table.
+    \item \texttt{update.php} - a web service for naming a Pokemon in your Pokedex.
+    \item \texttt{delete.php} - a web service for removing a Pokemon from your Pokedex table.
+    \item \texttt{trade.php} - a web service for updating your Pokedex list after a Pokemon ``trade''.
+    \item \texttt{common.php} - shared PHP functions for your other PHP files.
+  \end{itemize}
+\end{question}
+
+
+\begin{question}{Behavior}
+  \vspace{1em}
+  \subquestion*{Creating Your Own Database - \texttt{setup.sql}}
+  Before starting the PHP files, you will need to set up your own SQL database. In Cloud 9, you can
+  do so by starting the mysql terminal and entering the following commands: 
+  \begin{verbatim}
+CREATE DATABASE hw7;
+use hw7;\end{verbatim}
+  This is the database you'll be querying into throughout the assignment. The provided front-end code will use your
+  web services and the data in your database to keep track of which Pokemon you have caught. Storing your pokemon in
+  a database (instead of in a JS array as suggested in HW5) allows us to maintain the state after refreshing or exiting the web page.
+  \newline
+
+  Write a SQL file that creates a table called ``Pokedex'' to store your collected Pokemon. This table
+  should have three columns: ``name'' for each Pokemon's name which also serves as the table's
+  \texttt{PRIMARY KEY} (e.g., ``Bulbasaur''), ``nickname'' for
+  each Pokemon's nickname (e.g., ``Bulby''), and ``datefound'' for the date and time you collected the Pokemon. 
+  The name and nickname columns should have
+  \texttt{VARCHAR} data types and allow strings of at least 20 characters in length. 
+  \newline
+  
+  We can represent date and time in mysql using the \texttt{DATETIME} data type. This type represents a date and time
+  in the format \texttt{YYYY-MM-DD HH:MI:SS} (e.g., 2017-05-15 13:54:00 to represent 1:54 PM on May 15th, 2017).
+  \newline
+
+  Your database name (hw7), table name (Pokedex), column names (name, nickname, datefound) must match exactly those
+  here in the spec. Your columns must match exactly those described here in the spec.
+  \newline
+
+  Note the following SQL commands that will probably prove useful:
+  \begin{verbatim}
+SOURCE setup.sql;                 -- runs your setup.sql file
+SHOW databases;                   -- lists databases in your mysql
+USE hw7;                          -- tells mysql to use your hw7 database
+SHOW tables;                      -- list tables in your currently active (hw7) database
+DESCRIBE <tablename>;             -- gives information about the columns of a table
+DROP TABLE <tablename>;           -- careful with this one, it deletes a table entirely\end{verbatim}
+
+  \subquestion*{Fetching Player Credentials - \texttt{getcreds.php}}
+  This PHP file returns the user's player ID (PID) and token. For this assignment, your PID
+  will be your UW netid. These PID and token values will be used by the front end code and the games webservice for
+  verifying that players are who they say they are when they play moves in battle mode, and trade with one another.
+  \newline
+
+  You will need to generate your token to play games and trade with other students on our server. To do so, visit
+  \url{https://webster.cs.washington.edu/pokedex-2/uwnetid/generate-token.php}. The PID and token
+  values displayed should be carefully copy/pasted in your \texttt{getcreds.php} file.
+  \newline
+
+  In this PHP file, you should print as a \texttt{plain text} response your PID followed by your
+  token, each on their own line. Note that there are no query parameters for this file, so you
+  print these values whenever the web service is called. Below is an example response for Whitaker's credentials:
+\begin{verbatim}
+whitab
+poketoken_123456789.987654321\end{verbatim}
+
+  \subquestion*{Fetching Pokedex Data - \texttt{select.php}}
+  \texttt{select.php} should output a JSON response of all Pokemon you have found in your Pokedex, 
+  including the name, nickname, and found date/time for each Pokemon. Below is an example response:
+\begin{verbatim}
+{
+  "pokemon": [
+     { "name" : "Bulbasaur",
+       "nickname" : "Bulby",
+       "datefound" : "2017-05-15 13:54:00" },
+     { "name" : "Charmander",
+       "nickname" : "Charmy",
+       "datefound" : "2017-05-16 08:45:10" },
+       ... ]
+}\end{verbatim}
+This PHP web service should take no query parameters.
+\newpage
+  \subquestion*{Adding a Pokemon to your Pokedex - \texttt{insert.php}}
+  Query Parameters (\texttt{POST}):
+  \begin{itemize}
+    \item \texttt{name} - name of Pokemon to add
+    \item \texttt{nickname} (optional) - nickname of added Pokemon
+  \end{itemize}
+  \texttt{insert.php} adds a Pokemon to your Pokedex table, given a required \texttt{name}
+  parameter. The \texttt{name} should be added to your Pokedex in the format given in the request (in
+  other words, you should not modify the casing/spacing/special characters for the name).
+  \newline
+
+  If passed a \texttt{nickname} parameter, this nickname should also be added with the Pokemon. 
+  Otherwise, the nickname for the
+  Pokemon in your Pokedex table should be set to the Pokemon's name in all uppercase (e.g.,
+  ``BULBASAUR'' for ``Bulbasaur''). You should also make sure to
+  include the date/time you added the Pokemon. In PHP, you can get the current date-time in the
+  format for the previously-described SQL \texttt{DATETIME} data type using the following code:
+  \begin{verbatim}
+date_default_timezone_set('America/Los_Angeles');
+$time = date('y-m-d H:i:s');\end{verbatim}
+  You should add the result \texttt{\$time} variable to add to your \texttt{datefound} table column.
+  \newline
+
+  Upon success, you should output a JSON result in the format:
+  \begin{verbatim}
+{ "success" : "Success! <pokemon> added to your Pokedex!" }\end{verbatim}
+  where you should replace \texttt{<pokemon>} with the Pokemon's name in the same format it has in
+  the table. If the Pokemon is
+  already in the Pokedex (as determined by a duplicate name field), you should print a message with
+  a 400 error header in
+  the JSON format: 
+  \begin{verbatim}{ "error" : "Error: Pokemon <pokemon> already found." }\end{verbatim}
+  You should not change anything in your
+  Pokedex as a result. 
+
+  \subquestion*{Removing a Pokemon from your Pokedex - \texttt{delete.php}}
+  Query Parameters (\texttt{POST}):
+  \begin{itemize}
+    \item \texttt{name} - name of Pokemon to remove, or
+    \item \texttt{mode=removeall} - removes all Pokemon from your Pokedex 
+  \end{itemize}
+  If passed \texttt{name}, \texttt{delete.php} removes the Pokemon with the given name
+  (case-insenstive) from your Pokedex. For example, if you have a Charmander in your Pokedex table
+  and a request to \texttt{delete.php} with \texttt{name} passed as \texttt{charMANDER} is made,
+  your Charmander should be removed from your table.
+  \newline
+
+  Upon success in this case, you should print a JSON result in the format:
+  \begin{verbatim}
+{ "success" : "Success! <pokemon> removed from your Pokedex!" }\end{verbatim}
+  (again, replacing \texttt{<pokemon>} with the removed Pokemon's name).
+  \newline
+
+  If passed a Pokemon name that is not in your Pokedex, you should print a message with a 400 error
+  header in the JSON format: 
+  \begin{verbatim}{ "error" : "Error: Pokemon <pokemon> not found in your Pokedex." }\end{verbatim}
+   where \texttt{<pokemon>} is replaced with the value of the passed \texttt{name} (maintaining
+  letter-casing). Your table should then not change as a result.
+  \newline
+
+  Otherwise if passed \texttt{mode=removeall} all Pokemon should be removed from your Pokedex table.
+  \newpage
+
+  Upon success in this case, you should print a JSON result in the format:
+  \begin{verbatim}
+{ "success" : "Success! All Pokemon removed from your Pokedex!" }\end{verbatim}
+
+  If passed a mode other than \texttt{removeall}, you should print a message with a 400 error header
+  in the format: 
+  \begin{verbatim}{ "error" : "Error: Unknown mode <mode>." }\end{verbatim}
+  where \texttt{mode} is replaced with whatever
+  value the user passed for this query parameter. If passed both \texttt{mode=removeall} and
+  \texttt{name} as query parameters, the \texttt{name} functionality should hold precedence (in
+  other words, remove only the Pokemon with the given name and don't execute the removeall
+  behavior).
+
+  \subquestion*{Trading Pokemon - \texttt{trade.php}}
+  Query Parameters (\texttt{POST}):
+  \begin{itemize}
+    \item \texttt{mypokemon} - name of Pokemon to give up in trade
+    \item \texttt{theirpokemon} - name of Pokemon to receive in trade
+  \end{itemize}
+  \texttt{trade.php} takes a Pokemon to remove from your Pokedex
+  \texttt{mypokemon} (case-insensitive) and a Pokemon to add to your Pokedex \texttt{theirpokemon}. 
+  \newline
+
+  This web service add should insert \texttt{theirpokemon} into your Pokedex and remove
+  \texttt{mypokemon} from your Pokedex. Upon success, you should print a JSON result in the format: 
+  \begin{verbatim}
+{ "success" : "Success! You have traded your <mypokemon> for <theirpokemon>!" }\end{verbatim}
+  You should give the added Pokemon the default nickname specified in \texttt{insert.php}. If your you do not have the passed \texttt{mypokemon} in your Pokedex table, you should print a
+  400 error header with a message in the same format as the error message specified in
+  \texttt{delete.php} (using \texttt{mypokemon} for the Pokemon's name).
+  \newline
+
+  Otherwise, if you already have the passed \texttt{theirpokemon} in your Pokedex, you should print
+  a 400 error header with a message in the JSON format: 
+  \begin{verbatim}
+{ "error" : "Error: You have already found <theirpokemon>." }\end{verbatim}
+
+  If either error occurs, your table should not be changed as a result.
+
+  \subquestion*{Renaming a Pokemon in your Pokedex - \texttt{update.php}}
+  Query Parameters (\texttt{POST}):
+  \begin{itemize}
+    \item \texttt{name} - name of Pokemon to rename
+    \item \texttt{nickname} - new nickname to give to Pokemon
+  \end{itemize}
+  \texttt{update.php} updates a Pokemon in your Pokedex table with the given \texttt{name}
+  (case-insensitive) 
+  parameter to have the given \texttt{nickname} (overwriting any previous nicknames). 
+  \newline
+
+  Upon success, you should print a JSON result in the format: 
+  \begin{verbatim}
+{ "success" : "Success! Your <name> is now named <nickname>!" }\end{verbatim}
+  As in the previous files, \texttt{name} should be printed in the same format as it is
+  in the Pokedex table.
+  \newline
+
+  If you do not have the Pokemon with the passed \texttt{name} in your Pokedex, you should output
+  the error behavior as in the same case for \texttt{delete.php}.
+
+  \subquestion*{\texttt{common.php}}
+  You should factor any shared code into \texttt{common.php} and turn it in with the rest of your
+  PHP files. Recall that you can use \texttt{include 'common.php'} at the top of a PHP file to
+  include all functions that are found in a file called \texttt{common.php} (requiring it is in the
+  same directory as the file including it).
+  \newline
+
+  For any PHP web service with \texttt{GET} or \texttt{POST} parameters, if the user does not
+  provide a required parameter, a 400 error message should be output in the JSON format:
+  \begin{verbatim}
+{ "error" : "Missing <parametername> parameter"}\end{verbatim}
+or
+  \begin{verbatim}
+{ "error" : "Missing <parameter1> and <parameter2> parameters"}\end{verbatim}
+if there are two required parameters missing, or
+  \begin{verbatim}
+{ "error" : "Missing <parameter1> or <parameter2> parameters"}\end{verbatim}
+if both parameters are missing for a web service that requires one or the other (as is the case with
+\texttt{delete.php}). These error responses should take precedence over any other error for each web service.
+
+\end{question}
+
+\begin{question}{Development Strategy}
+  \subquestion*{SQL}
+    This homework should give you a lot of experience using the \texttt{mysql} program to keep track of what changes
+    are being made to your database.
+     \begin{itemize}
+       \item Run basic versions of your queries from the \texttt{mysql} terminal before putting them
+         into your PHP.
+       \item Use \texttt{try/catch(PDOException \$pdoex)} to trap SQL exceptions in your PHP code,
+         and print them for debugging.
+     \end{itemize}
+
+  \subquestion*{PHP}
+    The provided front end for this homework is NOT a good testing program. It assumes that your code works, and makes
+    many calls against your code in quick succession. We STRONGLY encourage you to call your PHP functions over the web
+    before trying to use your code in concert with the provided front end.
+    \newline
+
+    For \texttt{GET} requests (\texttt{getcreds.php} and \texttt{select.php}) the easiest thing to do is simply use a browser to visit the URL and pass the query params.
+    \newline
+
+    For the other PHP files that you implement as \texttt{POST} requests, you'll need to do something a little bit more
+    complicated. This is because it's harder to simulate \texttt{POST} requests than \texttt{GET} requests, but you have some options:
+
+     \begin{itemize}
+       \item Make a dummy HTML page that lets you write JS AjaxPostPromises, or \texttt{POST}
+         XMLHttpRequests from the JS console.
+       \item Make a dummy HTML page with a form that submits to your PHP program.
+       \item Use a program like Postman \url{https://www.getpostman.com/} to craft \texttt{POST} requests against your API.
+             (Note: you need Postman Interceptor if you are developing on Cloud9 -- this lets Postman use your browser
+             login information to authenticate your request to Cloud9).
+       \item One other way is to test with GET, and change to \texttt{POST} after you are satisfied that it works. However, you
+             should still test that the \texttt{POST} works before you turn your homework in, and for this reason, we encourage you to use
+             another testing strategy to get into the flow of actually testing \texttt{POST}s.
+     \end{itemize}
+
+  \subquestion*{General}
+     \begin{itemize}
+       \item Get your database setup, implement \texttt{setup.sql} and practice making some database SELECT, INSERT, UPDATE, DELETE queries from the \texttt{mysql} terminal
+       \item Implement \texttt{getcreds.php} to get going on the PHP part of the assignment.
+       \item Be on the lookout for common code to factor into \texttt{common.php}
+       \item Implement \texttt{select.php} using data that you have manually inserted into the DB from the \texttt{mysql} terminal
+       \item Implement \texttt{insert.php}, and verify that it works first in the database, and then with \texttt{select.php}
+       \item Implement \texttt{update.php} and \texttt{delete.php}
+       \item Implement \texttt{trade.php}
+     \end{itemize}
+\end{question}
+
+
+\begin{question}{Implementation and Grading}
+For full credit, your SQL and PHP code should follow the rules listed in the Style Guide on the course web site.
+\newline
+
+Your PHP code should not cause errors or warnings. Do not use the \texttt{global} keyword. Use good indentation/spacing,
+and avoid long lines over 100 characters. Avoid redundant code, and use parameters and return values properly.
+Capture common operations as functions to keep code size and complexity from growing.
+\newline
+
+Additionally, for this assignment, your PHP code must pass a PHP strict standards check. To check for this, you
+should execute the following line of code at the beginning of every PHP file that you write:
+  \begin{verbatim}
+error_reporting(E_ALL); \end{verbatim}
+
+Note that it might not make sense for this line of code to be physically present in every PHP file.
+\newline
+
+Format your PHP and SQL code similarly to the examples from class. Properly use whitespace and indentation.
+\newline
+
+Do not place your solution on a public web site. Submit your own work and follow the course misconduct policy.
+\end{question}
+\end{document}
