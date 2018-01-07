@@ -111,8 +111,15 @@ If passed a mode other than removeall, you should print a message with a 400 err
 where mode is replaced with whatever value the user passed for this query parameter.
 
 
-<li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
-name, nickname, and found date/time for each Pokemon.</li>
+<li> Trading Pokemon - trade.php: 
+  
+  <ul> Query Parameters (POST):
+  <li> mypokemon - name of Pokemon to give up in trade</li>
+  <li> theirpokemon - name of Pokemon to receive in trade</li>
+ </ul>
+  
+ trade.php takes a Pokemon to remove from your Pokedex mypokemon (case-insensitive) and a Pokemon to add
+to your Pokedex theirpokemon.</li>
 
 Example output:
 ```
