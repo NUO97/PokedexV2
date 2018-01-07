@@ -59,8 +59,7 @@ Example output:
 insert.php adds a Pokemon to your Pokedex table, given a required name parameter. The name should be
 added to your Pokedex in all-lowercase (for example, name=BulbaSAUR should be saved as bulbasaur in the
 Pokedex table).
-If passed a nickname parameter, this nickname should also be added with the Pokemon (don’t modify the
-anything to upper or lower case for the nickname, just store it as it was given). Otherwise, the nickname for
+If passed a nickname parameter, this nickname should also be added with the Pokemon. Otherwise, the nickname for
 the Pokemon in your Pokedex table should be set to the Pokemon’s name in all uppercase (e.g., BULBASAUR
 for name=BulbaSAUR).</li>
 
@@ -77,22 +76,41 @@ with a 400 error header in the JSON format:
 where you should not change anything in your Pokedex as a result. For both success and error cases, <name>
 should be replaced with the value of the passed name (maintaining letter-casing).
   
-<li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
-name, nickname, and found date/time for each Pokemon.</li>
+<li> Removing a Pokemon from your Pokedex - delete.php: 
+  <ul> Query Parameters (POST):
+  <li> name - name of Pokemon to remove, or</li>
+  <li> mode=removeall - removes all Pokemon from your Pokedex</li>
+ </ul>
+  If passed name, delete.php removes the Pokemon with the given name (case-insenstive) from your Pokedex.
+For example, if you have a Charmander in your Pokedex table and a request to delete.php with name passed
+as charMANDER is made, your Charmander should be removed from your table.
+</li>
 
-Example output:
+Upon success in this case, you should print a JSON result in the format:
 ```
-{
-"pokemon": [
-{ "name" : "bulbasaur",
-"nickname" : "Bulby",
-"datefound" : "2017-05-15 13:54:00" },
-{ "name" : "charmander",
-"nickname" : "Charmy",
-"datefound" : "2017-05-16 08:45:10" },
-... ]
-}
+{ "success" : "Success! <name> removed from your Pokedex!" }
 ```
+If passed a Pokemon name that is not in your Pokedex, you should print a message with a 400 error header in
+the JSON format:
+```
+{ "error" : "Error: Pokemon <name> not found in your Pokedex." }
+```
+Your table should then not change as a result.
+For both success and error cases, <name> should be replaced with the value of the passed name (maintaining
+letter-casing).
+ 
+Otherwise if passed mode=removeall, all Pokemon should be removed from your Pokedex table.
+Upon success in this case, you should print a JSON result in the format:
+```
+{ "success" : "Success! All Pokemon removed from your Pokedex!" }
+```
+If passed a mode other than removeall, you should print a message with a 400 error header in the format:
+```
+{ "error" : "Error: Unknown mode <mode>." }
+```
+where mode is replaced with whatever value the user passed for this query parameter.
+
+
 <li> Fetching Pokedex Data - select.php: select.php should output a JSON response of all Pokemon you have found (your Pokedex table), including the
 name, nickname, and found date/time for each Pokemon.</li>
 
